@@ -13,6 +13,19 @@ const assets = [
   'https://fonts.gstatic.com/s/materialicons/v109/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2',
   '/pages/fallback.html'
 ];
+
+// LIMIT SIZE OF CACHE FUNCTION
+const limitCacheSize = (name, size) => {
+  caches.open(name).then(cache => {
+    cache.keys().then(keys => {
+      console.log('keys:', keys, keys.length);
+      if(keys.length > size) {
+        cache.delete(keys[0]).then(limitCacheSize(name, size));
+      }
+    })
+  })
+}
+
 // install service worker
 self.addEventListener('install', evt => {
   //console.log('service worker has been installed.');
@@ -55,9 +68,11 @@ self.addEventListener('fetch', evt => {
       return cacheRes || fetch(evt.request).then(fetchRes => {
         return caches.open(dynamicCacheName).then(cache => {
           cache.put(evt.request.url, fetchRes.clone());
+          limitCacheSize(dynamicCacheName, 2);
           return fetchRes;
         });
       }).catch(() => {
+        // RETURN FALLBACK CONDITIONALLY
         if(evt.request.url.indexOf('.html') > -1) {
           return caches.match('/pages/fallback.html');
         }

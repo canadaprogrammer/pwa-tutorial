@@ -1,9 +1,10 @@
-const staticCacheName = 'site-static-v4';
-const dynamicCacheName = 'site-dynamic-v4';
+const staticCacheName = 'site-static-v6';
+const dynamicCacheName = 'site-dynamic-v6';
 const assets = [
   '/',
   '/index.html',
   '/js/app.js',
+  // '/js/db.js',
   '/js/ui.js',
   '/js/materialize.min.js',
   '/css/styles.css',
@@ -69,7 +70,7 @@ self.addEventListener('fetch', evt => {
         return cacheRes || fetch(evt.request).then(fetchRes => {
           return caches.open(dynamicCacheName).then(cache => {
             cache.put(evt.request.url, fetchRes.clone());
-            limitCacheSize(dynamicCacheName, 2);
+            limitCacheSize(dynamicCacheName, 15);
             return fetchRes;
           });
         }).catch(() => {

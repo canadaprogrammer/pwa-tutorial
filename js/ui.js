@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // RENDER RECIPE DATA
-const renderRecipe = (data, id, indicate) => {
+const renderRecipe = (data, id) => {
   const html = `
     <div class="card-panel recipe white row" data-id="${id}">
       <img src="/img/dish.png" alt="recipe thumb">
@@ -23,10 +23,11 @@ const renderRecipe = (data, id, indicate) => {
       </div>
     </div>
   `;
-  if(indicate == 'add') {
-    recipes.innerHTML += html;
-  }
-  if(indicate == 'remove') {
-    document.querySelector(`.card-panel[data-id="${id}"`).remove();
-  }
+  recipes.innerHTML += html;
+}
+
+// REMOVE RECIPE FROM DOM
+const removeRecipe = (id) => {
+  const recipe = document.querySelector(`.recipe[data-id="${id}"`);
+  recipe.remove();
 }

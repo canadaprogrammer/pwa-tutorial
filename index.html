@@ -78,7 +78,7 @@
   <script type="module">
     // Import the functions you need from the SDKs you need
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js";
-    import { getFirestore, onSnapshot, query, where, collection, enableIndexedDbPersistence, addDoc, deleteDoc, deleteField } from 'https://www.gstatic.com/firebasejs/9.1.3/firebase-firestore.js';
+    import { getFirestore, onSnapshot, query, where, collection, enableIndexedDbPersistence, doc, addDoc, deleteDoc, deleteField } from 'https://www.gstatic.com/firebasejs/9.1.3/firebase-firestore.js';
     // import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-analytics.js";
     // TODO: Add SDKs for Firebase products that you want to use
     // https://firebase.google.com/docs/web/setup#available-libraries
@@ -120,11 +120,11 @@
         // console.log(change, change.doc.data(), change.doc.id);
         if(change.type === 'added') {
           // ADD THE DOCUMENT DATA TO THE WEB PAGE
-          renderRecipe(change.doc.data(), change.doc.id, 'add');
+          renderRecipe(change.doc.data(), change.doc.id);
         }
         if(change.type === 'removed') {
           // REMOVE THE DOCUMENT DATA FROM THE WEB PAGE
-          renderRecipe(change.doc.data(), change.doc.id, 'remove');
+          removeRecipe(change.doc.id);
         }
       });
     });
@@ -146,6 +146,21 @@
       form.title.value = '';
       form.ingredients.value = '';
     });
+
+    // REMOVE RECIPE
+    const recipeContainer = document.querySelector('.recipes');
+    recipeContainer.addEventListener('click', evt => {
+      // console.log(evt);
+      if(evt.target.tagName === 'I'){
+        const id = evt.target.getAttribute('data-id');
+        deleteDoc(doc(db, 'recipes', id));
+      }
+    });
+    // const recipe_del = document.querySelector('.recipe_delete i');
+    // recipe_del.addEventListener('click', evt => {
+    //   evt.preventDefault();
+    //   deleteDoc(doc(db, 'recipes', )
+    // }
 
     // Get a list of recipes from your database
     // async function getRecipes(db) {

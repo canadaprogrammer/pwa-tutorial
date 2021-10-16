@@ -1,5 +1,5 @@
-const staticCacheName = 'site-static-v2';
-const dynamicCacheName = 'site-dynamic-v1';
+const staticCacheName = 'site-static-v4';
+const dynamicCacheName = 'site-dynamic-v4';
 const assets = [
   '/',
   '/index.html',
@@ -60,23 +60,25 @@ self.addEventListener('activate', evt => {
 self.addEventListener('fetch', evt => {
   //console.log('fetch event', evt);
 
-  // using cache
-  // evt.respondWith(
-  //   caches.match(evt.request).then(cacheRes => {
-  //     // return cacheRes || fetch(evt.request);
-  //     // CREATE DYNAMIC CACHE WHEN A USER ENTER THE PAGE ON ONLINE
-  //     return cacheRes || fetch(evt.request).then(fetchRes => {
-  //       return caches.open(dynamicCacheName).then(cache => {
-  //         cache.put(evt.request.url, fetchRes.clone());
-  //         limitCacheSize(dynamicCacheName, 2);
-  //         return fetchRes;
-  //       });
-  //     }).catch(() => {
-  //       // RETURN FALLBACK CONDITIONALLY
-  //       if(evt.request.url.indexOf('.html') > -1) {
-  //         return caches.match('/pages/fallback.html');
-  //       }
-  //     });
-  //   })
-  // );
+  if(evt.request.url.indexOf('firestore.googleapis.com') === -1){
+    // using cache
+    evt.respondWith(
+      caches.match(evt.request).then(cacheRes => {
+        // return cacheRes || fetch(evt.request);
+        // CREATE DYNAMIC CACHE WHEN A USER ENTER THE PAGE ON ONLINE
+        return cacheRes || fetch(evt.request).then(fetchRes => {
+          return caches.open(dynamicCacheName).then(cache => {
+            cache.put(evt.request.url, fetchRes.clone());
+            limitCacheSize(dynamicCacheName, 2);
+            return fetchRes;
+          });
+        }).catch(() => {
+          // RETURN FALLBACK CONDITIONALLY
+          if(evt.request.url.indexOf('.html') > -1) {
+            return caches.match('/pages/fallback.html');
+          }
+        });
+      })
+    );
+  }
 });
